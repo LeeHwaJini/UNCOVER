@@ -1,0 +1,6 @@
+rootProject.name = 'uncover'
+
+include 'sh-common'
+include 'uncover-domain'
+include 'uncover-app-bo'
+include 'uncover-app-fo'

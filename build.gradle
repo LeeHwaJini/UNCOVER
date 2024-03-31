@@ -1,0 +1,104 @@
+buildscript {
+    ext {
+        springBootVersion = '2.6.1'
+    }
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
+        classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.34.976'
+    }
+}
+
+
+
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+
+    group = 'com.shsoftnet'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '1.8'
+
+    repositories {
+        mavenCentral()
+        maven { url "https://www.egovframe.go.kr/maven/" } // maven 원격 저장소
+    }
+
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+        compile.exclude module: 'slf4j-log4j12'
+    }
+
+    // 모든 모듈에서 사용하는 라이브러리
+    dependencies {
+        // https://mvnrepository.com/artifact/com.google.guava/guava
+        implementation 'com.google.guava:guava:r05'
+
+        // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+        implementation 'org.apache.commons:commons-lang3:3.12.0'
+        compile 'commons-io:commons-io:2.11.0'
+
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        compileOnly 'org.projectlombok:lombok'
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    }
+}
+
+project(':sh-common') {
+    dependencies {
+    }
+}
+
+project(':uncover-domain') {
+    dependencies {
+        compileOnly project(':sh-common')
+    }
+
+    tasks.register("prepareKotlinBuildScriptModel"){}
+    task wrapper(type: Wrapper){
+        gradleVersion = '6.8'
+    }
+}
+
+project(':uncover-app-bo') {
+    dependencies {
+        implementation project(':sh-common')
+        implementation project(':uncover-domain')
+    }
+
+    tasks.register("prepareKotlinBuildScriptModel"){}
+    task wrapper(type: Wrapper){
+        gradleVersion = '6.8'
+    }
+}
+
+project(':uncover-app-fo') {
+    dependencies {
+        implementation project(':sh-common')
+        implementation project(':uncover-domain')
+    }
+
+    tasks.register("prepareKotlinBuildScriptModel"){}
+    task wrapper(type: Wrapper){
+        gradleVersion = '6.8'
+    }
+}
